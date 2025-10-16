@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+  <head>
+    <title>This is the new title of the webpage!</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+  <h2>Shared Array (Live)</h2>
+  <pre id="arrayDisplay">Connecting...</pre>
+
+  <h3>Update the Array</h3>
+  <textarea id="arrayInput" rows="4" cols="50">["new","values"]</textarea><br>
+  <button onclick="sendArray()">Update Array</button>
+
+  <script>
+    socket.onmessage = event => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'array_update') {
+        document.getElementById('arrayDisplay').textContent = JSON.stringify(data.data, null, 2);
+      }
+    };
+
+    function sendArray() {
+      try {
+        const input = document.getElementById('arrayInput').value;
+        const newArray = JSON.parse(input);
+        socket.send(JSON.stringify({ type: 'update_array', data: newArray }));
+      } catch (err) {
+        alert('Invalid JSON array');
+      }
+    }
+  </script>
+  </body>
+</html>
